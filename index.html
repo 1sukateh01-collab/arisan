@@ -164,6 +164,7 @@
             <section class="panel-tab" data-panel="riwayat">
                 <div class="section-head">
                     <h2>Riwayat Pemenang</h2>
+                    <button class="btn btn-primary admin-only" id="btnTambahRiwayat">+ Tambah Manual</button>
                 </div>
                 <div class="table-wrap">
                     <table class="data-table">
@@ -204,6 +205,10 @@
                     <label class="field">
                         <span>Tanggal Mulai</span>
                         <input type="date" id="setTanggal">
+                    </label>
+                    <label class="field">
+                        <span>Periode Aktif Saat Ini</span>
+                        <input type="number" id="setPeriodeAktif" min="1" value="1">
                     </label>
                 </div>
 
@@ -285,6 +290,33 @@
                 <div class="modal-actions">
                     <button class="btn btn-secondary" data-close>Batal</button>
                     <button class="btn btn-primary" id="btnSavePeserta">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Riwayat Manual -->
+        <div class="modal" id="modalTambahRiwayat" hidden>
+            <div class="modal-backdrop" data-close-riwayat></div>
+            <div class="modal-box">
+                <h3>Tambah Pemenang Manual</h3>
+                <p>Catat pemenang dari periode yg sudah lewat. Peserta yg terdaftar di sini otomatis tidak akan muncul di roda kocok.</p>
+                <label class="field">
+                    <span>Periode *</span>
+                    <input type="number" id="riwayatPeriode" min="1" placeholder="contoh: 1, 2, 3, ...">
+                </label>
+                <label class="field">
+                    <span>Pemenang *</span>
+                    <select id="riwayatPeserta">
+                        <option value="">— Pilih peserta —</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span>Tanggal (opsional)</span>
+                    <input type="date" id="riwayatTanggal">
+                </label>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" data-close-riwayat>Batal</button>
+                    <button class="btn btn-primary" id="btnSaveRiwayatManual">Simpan</button>
                 </div>
             </div>
         </div>

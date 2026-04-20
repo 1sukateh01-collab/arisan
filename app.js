@@ -727,23 +727,77 @@ function renderPengaturan() {
     document.getElementById('setNominal').value = db.settings.nominal;
     document.getElementById('setPeriode').value = db.settings.periode;
     document.getElementById('setTanggal').value = db.settings.tanggalMulai;
+    document.getElementById('setPeriodeAktif').value = db.periodeAktif;
 }
 
-['setNama', 'setNominal', 'setPeriode', 'setTanggal'].forEach(id => {
+['setNama', 'setNominal', 'setPeriode', 'setTanggal', 'setPeriodeAktif'].forEach(id => {
     document.getElementById(id).addEventListener('change', async () => {
         try {
+            const newPeriodeAktif = Math.max(1, Number(document.getElementById('setPeriodeAktif').value) || 1);
             await dbUpdateSettings({
                 namaArisan: document.getElementById('setNama').value.trim() || 'Arisan Saya',
                 nominal: Number(document.getElementById('setNominal').value) || 0,
                 periode: document.getElementById('setPeriode').value,
-                tanggalMulai: document.getElementById('setTanggal').value
+                tanggalMulai: document.getElementById('setTanggal').value,
+                periodeAktif: newPeriodeAktif
             });
+            periodeView = db.periodeAktif;
             updateBrand();
+            renderDashboard();
             toast('Pengaturan disimpan');
         } catch (err) {
             toast('Gagal simpan: ' + err.message, true);
         }
     });
+});
+
+// ======= TAMBAH RIWAYAT MANUAL =======
+document.getElementById('btnTambahRiwayat').addEventListener('click', () => {
+    const select = document.getElementById('riwayatPeserta');
+    select.innerHTML = '<option value="">— Pilih peserta —</option>' +
+        db.peserta.map(p => `<option value="${p.id}">${escapeHtml(p.nama)}</option>`).join('');
+    document.getElementById('riwayatTanggal').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('riwayatPeriode').value = '';
+    document.getElementById('modalTambahRiwayat').hidden = false;
+    setTimeout(() => document.getElementById('riwayatPeriode').focus(), 50);
+});
+
+document.querySelectorAll('[data-close-riwayat]').forEach(el => {
+    el.addEventListener('click', () => {
+        document.getElementById('modalTambahRiwayat').hidden = true;
+    });
+});
+
+document.getElementById('btnSaveRiwayatManual').addEventListener('click', async () => {
+    const periode = Number(document.getElementById('riwayatPeriode').value);
+    const pesertaId = document.getElementById('riwayatPeserta').value;
+    const tanggalInput = document.getElementById('riwayatTanggal').value;
+
+    if (!periode || periode < 1) { toast('Periode harus angka valid', true); return; }
+    if (!pesertaId) { toast('Pilih pemenang', true); return; }
+
+    const peserta = db.peserta.find(p => p.id === pesertaId);
+    if (!peserta) { toast('Peserta tidak ditemukan', true); return; }
+
+    const tanggal = tanggalInput ? new Date(tanggalInput).toISOString() : new Date().toISOString();
+    const jumlah = db.peserta.length * db.settings.nominal;
+    const btn = document.getElementById('btnSaveRiwayatManual');
+    btn.disabled = true;
+    try {
+        await dbSaveWinner(periode, peserta, jumlah);
+        // Override tanggal dengan input user (dbSaveWinner pakai now())
+        await sb.from('riwayat').update({ tanggal }).eq('periode', periode);
+        const r = db.riwayat.find(x => x.periode === periode);
+        if (r) r.tanggal = tanggal;
+        toast(`${peserta.nama} dicatat sebagai pemenang periode ${periode}`);
+        document.getElementById('modalTambahRiwayat').hidden = true;
+        renderRiwayat();
+        renderDashboard();
+    } catch (err) {
+        toast('Gagal simpan: ' + err.message, true);
+    } finally {
+        btn.disabled = false;
+    }
 });
 
 function updateBrand() {
