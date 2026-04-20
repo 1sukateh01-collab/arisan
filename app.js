@@ -498,7 +498,7 @@ document.getElementById('btnNextPeriode').addEventListener('click', () => {
 });
 
 // ======= KOCOK (ROULETTE WHEEL) =======
-const WHEEL_COLORS = ['#10b981', '#fbbf24', '#60a5fa', '#f87171', '#c084fc', '#f472b6', '#22d3ee', '#fb923c', '#a3e635', '#e879f9'];
+const WHEEL_COLORS = ['#f97316', '#fbbf24', '#38bdf8', '#ef4444', '#22d3ee', '#a855f7', '#facc15', '#64748b', '#10b981', '#ec4899'];
 const CANVAS_SIZE = 720;
 let wheelRotation = 0;
 let cachedKandidat = [];
