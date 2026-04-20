@@ -1,0 +1,7 @@
+server.js
+START.bat
+make-icon.ps1
+make-shortcut.ps1
+icon.ico
+node_modules/
+*.log

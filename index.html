@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arisan Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Memuat data...</p>
+    </div>
+    <div class="app">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-icon">A</div>
+                <div>
+                    <h1 id="brandName">Arisan Manager</h1>
+                    <p class="brand-sub" id="brandSub">Kelola arisan dengan mudah</p>
+                </div>
+            </div>
+            <nav class="tabs">
+                <button class="tab active" data-tab="dashboard">Dashboard</button>
+                <button class="tab" data-tab="peserta">Peserta</button>
+                <button class="tab" data-tab="setoran">Setoran</button>
+                <button class="tab" data-tab="kocok">Kocok</button>
+                <button class="tab" data-tab="riwayat">Riwayat</button>
+                <button class="tab" data-tab="pengaturan">Pengaturan</button>
+            </nav>
+        </header>
+
+        <main class="content">
+            <!-- DASHBOARD -->
+            <section class="panel-tab active" data-panel="dashboard">
+                <h2>Ringkasan</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Peserta</div>
+                        <div class="stat-value" id="statPeserta">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Periode Aktif</div>
+                        <div class="stat-value" id="statPeriode">1</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Sudah Menang</div>
+                        <div class="stat-value" id="statMenang">0 / 0</div>
+                    </div>
+                    <div class="stat-card highlight">
+                        <div class="stat-label">Total Terkumpul</div>
+                        <div class="stat-value" id="statUang">Rp 0</div>
+                    </div>
+                </div>
+
+                <div class="dash-row">
+                    <div class="dash-card">
+                        <h3>Setoran Periode Ini</h3>
+                        <div class="progress-ring">
+                            <div class="progress-ring-inner">
+                                <span id="dashSetoranPct">0%</span>
+                                <small id="dashSetoranText">0 / 0 bayar</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <h3>Belum Menang</h3>
+                        <ul class="mini-list" id="dashBelumMenang">
+                            <li class="empty">Belum ada peserta</li>
+                        </ul>
+                    </div>
+                    <div class="dash-card">
+                        <h3>Pemenang Terakhir</h3>
+                        <div id="dashPemenang" class="winner-box empty">
+                            Belum ada pemenang
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PESERTA -->
+            <section class="panel-tab" data-panel="peserta">
+                <div class="section-head">
+                    <h2>Daftar Peserta</h2>
+                    <button class="btn btn-primary" id="btnAddPeserta">+ Tambah Peserta</button>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table" id="tablePeserta">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nama</th>
+                                <th>No. HP</th>
+                                <th>Catatan</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyPeserta"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SETORAN -->
+            <section class="panel-tab" data-panel="setoran">
+                <div class="section-head">
+                    <h2>Tracking Setoran</h2>
+                    <div class="periode-nav">
+                        <button class="btn-icon" id="periodePrev">◀</button>
+                        <span class="periode-label">Periode <span id="periodeView">1</span></span>
+                        <button class="btn-icon" id="periodeNext">▶</button>
+                        <button class="btn btn-secondary btn-small" id="btnNextPeriode">+ Periode Baru</button>
+                    </div>
+                </div>
+                <div class="setoran-summary" id="setoranSummary"></div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nama</th>
+                                <th>Nominal</th>
+                                <th>Status Bayar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodySetoran"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- KOCOK -->
+            <section class="panel-tab" data-panel="kocok">
+                <h2>Kocok Arisan</h2>
+                <div class="kocok-info" id="kocokInfo"></div>
+                <div class="kocok-stage" id="kocokStage">
+                    <div class="wheel-container" id="wheelContainer">
+                        <div class="wheel-pointer"></div>
+                        <canvas class="wheel-canvas" id="wheelCanvas" width="720" height="720"></canvas>
+                        <div class="wheel-empty" id="wheelEmpty" hidden>Tidak ada kandidat</div>
+                    </div>
+                    <div class="kocok-display" id="kocokDisplay" hidden>—</div>
+                    <div class="kocok-sub" id="kocokSub">Tekan tombol untuk mulai kocok</div>
+                </div>
+                <div class="kocok-controls">
+                    <button class="btn btn-big btn-primary" id="btnKocok">🎲 Mulai Kocok</button>
+                    <button class="btn btn-big btn-success" id="btnSimpanMenang" hidden>✓ Simpan Pemenang</button>
+                    <button class="btn btn-secondary" id="btnUlangKocok" hidden>Ulang</button>
+                </div>
+                <div class="kocok-peserta">
+                    <h3>Kandidat (belum menang)</h3>
+                    <div id="kandidatList" class="chip-list"></div>
+                </div>
+            </section>
+
+            <!-- RIWAYAT -->
+            <section class="panel-tab" data-panel="riwayat">
+                <div class="section-head">
+                    <h2>Riwayat Pemenang</h2>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Periode</th>
+                                <th>Nama</th>
+                                <th>Tanggal</th>
+                                <th>Jumlah Diterima</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyRiwayat"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PENGATURAN -->
+            <section class="panel-tab" data-panel="pengaturan">
+                <h2>Pengaturan Arisan</h2>
+                <div class="settings-grid">
+                    <label class="field">
+                        <span>Nama Arisan</span>
+                        <input type="text" id="setNama" placeholder="Arisan Keluarga">
+                    </label>
+                    <label class="field">
+                        <span>Nominal Iuran (Rp)</span>
+                        <input type="number" id="setNominal" min="0" step="1000" value="100000">
+                    </label>
+                    <label class="field">
+                        <span>Periode</span>
+                        <select id="setPeriode">
+                            <option value="mingguan">Mingguan</option>
+                            <option value="bulanan" selected>Bulanan</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Tanggal Mulai</span>
+                        <input type="date" id="setTanggal">
+                    </label>
+                </div>
+
+                <h3 class="sub-head">Data</h3>
+                <div class="btn-row">
+                    <button class="btn btn-secondary" id="btnExport">⬇ Export JSON</button>
+                    <button class="btn btn-secondary" id="btnImport">⬆ Import JSON</button>
+                    <input type="file" id="importFile" accept=".json" hidden>
+                    <button class="btn btn-danger" id="btnReset">⚠ Reset Semua Data</button>
+                </div>
+                <p class="hint">Data tersimpan otomatis di browser (localStorage). Export reguler untuk backup.</p>
+            </section>
+        </main>
+
+        <!-- Chat Widget -->
+        <div class="chat-widget collapsed" id="chatWidget">
+            <div class="chat-head" id="chatHead">
+                <span class="chat-title">💬 Chat Grup</span>
+                <span class="chat-unread" id="chatUnread" hidden>0</span>
+                <span class="chat-toggle" id="chatToggle">▲</span>
+            </div>
+            <div class="chat-body">
+                <div class="chat-name-setup" id="chatNameSetup" hidden>
+                    <p>Masukin namamu dulu buat chat:</p>
+                    <input type="text" id="chatNameInput" placeholder="Contoh: Budi" maxlength="30">
+                    <button id="chatNameSave">Simpan</button>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <form class="chat-form" id="chatForm" hidden>
+                    <input type="text" id="chatInput" placeholder="Tulis pesan..." maxlength="500" autocomplete="off">
+                    <button type="submit" title="Kirim">➤</button>
+                </form>
+                <div class="chat-footer" id="chatFooter" hidden>
+                    <small>Masuk sebagai <b id="chatCurrentName"></b> · <a href="#" id="chatChangeName">ganti nama</a></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="toast"></div>
+
+        <!-- Modal Peserta -->
+        <div class="modal" id="modalPeserta" hidden>
+            <div class="modal-backdrop" data-close></div>
+            <div class="modal-box">
+                <h3 id="modalTitle">Tambah Peserta</h3>
+                <label class="field">
+                    <span>Nama *</span>
+                    <input type="text" id="inpNama" placeholder="Budi Santoso">
+                </label>
+                <label class="field">
+                    <span>No. HP / WA</span>
+                    <input type="text" id="inpHp" placeholder="0812xxxx">
+                </label>
+                <label class="field">
+                    <span>Catatan</span>
+                    <textarea id="inpCatatan" rows="2" placeholder="opsional"></textarea>
+                </label>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" data-close>Batal</button>
+                    <button class="btn btn-primary" id="btnSavePeserta">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Konfirmasi -->
+        <div class="modal" id="modalConfirm" hidden>
+            <div class="modal-backdrop" data-close-confirm></div>
+            <div class="modal-box modal-small">
+                <h3 id="confirmTitle">Konfirmasi</h3>
+                <p id="confirmMsg">Yakin?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" data-close-confirm>Batal</button>
+                    <button class="btn btn-danger" id="btnConfirmOk">Ya, Lanjut</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
