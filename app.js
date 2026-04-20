@@ -3,6 +3,20 @@ const SUPABASE_URL = 'https://nvfzcjbbblxijafrtzuz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_d7s3cWfzb_CmEwg_8iBCBw_E2-Xq2M1';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// ======= ADMIN MODE =======
+// ⚠️ GANTI password di bawah ini, lalu push ulang ke GitHub
+// Password ini yg kamu (admin) pakai buat edit/kocok arisan.
+// Peserta yg buka link tanpa password cuma bisa lihat + chat.
+const ADMIN_PASSWORD = 'admin123';
+const ADMIN_KEY = 'arisan-admin-v1';
+let isAdmin = localStorage.getItem(ADMIN_KEY) === 'yes';
+
+function applyAdminUI() {
+    document.body.classList.toggle('is-admin', isAdmin);
+    const btn = document.getElementById('adminBtn');
+    if (btn) btn.textContent = isAdmin ? '🔓 Logout' : '🔒 Admin';
+}
+
 // ======= STATE (in-memory cache) =======
 function defaultDB() {
     return {
@@ -288,6 +302,10 @@ function renderPeserta() {
         const statusBadge = menang
             ? '<span class="badge badge-menang">✓ Sudah Menang</span>'
             : '<span class="badge badge-belum">Belum</span>';
+        const actions = isAdmin ? `
+                    <button class="action-btn" data-action="edit" data-id="${p.id}">Edit</button>
+                    <button class="action-btn danger" data-action="delete" data-id="${p.id}">Hapus</button>
+        ` : '—';
         return `
             <tr>
                 <td>${i + 1}</td>
@@ -295,10 +313,7 @@ function renderPeserta() {
                 <td>${escapeHtml(p.hp || '—')}</td>
                 <td>${escapeHtml(p.catatan || '—')}</td>
                 <td>${statusBadge}</td>
-                <td>
-                    <button class="action-btn" data-action="edit" data-id="${p.id}">Edit</button>
-                    <button class="action-btn danger" data-action="delete" data-id="${p.id}">Hapus</button>
-                </td>
+                <td>${actions}</td>
             </tr>
         `;
     }).join('');
@@ -406,9 +421,9 @@ function renderSetoran() {
         const badge = bayar
             ? '<span class="badge badge-lunas">✓ Lunas</span>'
             : '<span class="badge badge-belum-bayar">Belum Bayar</span>';
-        const btn = bayar
+        const btn = !isAdmin ? '—' : (bayar
             ? `<button class="action-btn danger" data-toggle="${p.id}">Batal</button>`
-            : `<button class="action-btn" data-toggle="${p.id}">Tandai Lunas</button>`;
+            : `<button class="action-btn" data-toggle="${p.id}">Tandai Lunas</button>`);
         return `
             <tr>
                 <td>${i + 1}</td>
@@ -662,17 +677,18 @@ function renderRiwayat() {
         return;
     }
     const sorted = [...db.riwayat].sort((a, b) => a.periode - b.periode);
-    tbody.innerHTML = sorted.map(r => `
+    tbody.innerHTML = sorted.map(r => {
+        const actions = isAdmin ? `<button class="action-btn danger" data-del-riwayat="${r.periode}">Hapus</button>` : '—';
+        return `
         <tr>
             <td><b>Periode ${r.periode}</b></td>
             <td>${escapeHtml(r.nama)}</td>
             <td>${fmtDate(r.tanggal)}</td>
             <td>${fmtRp(r.jumlah || 0)}</td>
-            <td>
-                <button class="action-btn danger" data-del-riwayat="${r.periode}">Hapus</button>
-            </td>
+            <td>${actions}</td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
 }
 
 document.getElementById('tbodyRiwayat').addEventListener('click', e => {
@@ -777,6 +793,53 @@ document.querySelectorAll('[data-close-confirm]').forEach(el => {
 document.getElementById('btnConfirmOk').addEventListener('click', () => {
     document.getElementById('modalConfirm').hidden = true;
     if (confirmCallback) { const cb = confirmCallback; confirmCallback = null; cb(); }
+});
+
+// ======= ADMIN LOGIN =======
+document.getElementById('adminBtn').addEventListener('click', () => {
+    if (isAdmin) {
+        confirmAction('Keluar dari mode admin? Nanti kamu jadi read-only.', () => {
+            isAdmin = false;
+            localStorage.removeItem(ADMIN_KEY);
+            applyAdminUI();
+            const activeTab = document.querySelector('.tab.active')?.dataset.tab;
+            if (activeTab === 'pengaturan') switchTab('dashboard');
+            else if (activeTab) switchTab(activeTab);
+            toast('Keluar dari admin mode');
+        });
+    } else {
+        document.getElementById('modalAdmin').hidden = false;
+        setTimeout(() => document.getElementById('adminPwd').focus(), 50);
+    }
+});
+
+document.querySelectorAll('[data-close-admin]').forEach(el => {
+    el.addEventListener('click', () => {
+        document.getElementById('modalAdmin').hidden = true;
+        document.getElementById('adminPwd').value = '';
+    });
+});
+
+function tryAdminLogin() {
+    const pwd = document.getElementById('adminPwd').value;
+    if (pwd === ADMIN_PASSWORD) {
+        isAdmin = true;
+        localStorage.setItem(ADMIN_KEY, 'yes');
+        applyAdminUI();
+        document.getElementById('modalAdmin').hidden = true;
+        document.getElementById('adminPwd').value = '';
+        const activeTab = document.querySelector('.tab.active')?.dataset.tab;
+        if (activeTab) switchTab(activeTab);
+        toast('Admin mode aktif 🔓');
+    } else {
+        toast('Password salah', true);
+        document.getElementById('adminPwd').select();
+    }
+}
+
+document.getElementById('btnAdminLogin').addEventListener('click', tryAdminLogin);
+document.getElementById('adminPwd').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryAdminLogin();
 });
 
 // ======= CHAT =======
@@ -925,6 +988,7 @@ function setupChat() {
 // ======= INIT =======
 (async () => {
     setLoading(true, 'Menghubungkan ke database...');
+    applyAdminUI();
     try {
         await loadAll();
         periodeView = db.periodeAktif;

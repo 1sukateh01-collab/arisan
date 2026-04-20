@@ -18,10 +18,13 @@
         <header class="topbar">
             <div class="brand">
                 <div class="brand-icon">A</div>
-                <div>
+                <div class="brand-text">
                     <h1 id="brandName">Arisan Manager</h1>
                     <p class="brand-sub" id="brandSub">Kelola arisan dengan mudah</p>
                 </div>
+                <span class="mode-badge admin-only">🔐 ADMIN</span>
+                <span class="mode-badge peserta-only">👁 Read-only</span>
+                <button class="mode-btn" id="adminBtn" title="Mode Admin">🔒 Admin</button>
             </div>
             <nav class="tabs">
                 <button class="tab active" data-tab="dashboard">Dashboard</button>
@@ -29,7 +32,7 @@
                 <button class="tab" data-tab="setoran">Setoran</button>
                 <button class="tab" data-tab="kocok">Kocok</button>
                 <button class="tab" data-tab="riwayat">Riwayat</button>
-                <button class="tab" data-tab="pengaturan">Pengaturan</button>
+                <button class="tab admin-only" data-tab="pengaturan">Pengaturan</button>
             </nav>
         </header>
 
@@ -85,7 +88,7 @@
             <section class="panel-tab" data-panel="peserta">
                 <div class="section-head">
                     <h2>Daftar Peserta</h2>
-                    <button class="btn btn-primary" id="btnAddPeserta">+ Tambah Peserta</button>
+                    <button class="btn btn-primary admin-only" id="btnAddPeserta">+ Tambah Peserta</button>
                 </div>
                 <div class="table-wrap">
                     <table class="data-table" id="tablePeserta">
@@ -112,7 +115,7 @@
                         <button class="btn-icon" id="periodePrev">◀</button>
                         <span class="periode-label">Periode <span id="periodeView">1</span></span>
                         <button class="btn-icon" id="periodeNext">▶</button>
-                        <button class="btn btn-secondary btn-small" id="btnNextPeriode">+ Periode Baru</button>
+                        <button class="btn btn-secondary btn-small admin-only" id="btnNextPeriode">+ Periode Baru</button>
                     </div>
                 </div>
                 <div class="setoran-summary" id="setoranSummary"></div>
@@ -146,9 +149,10 @@
                     <div class="kocok-sub" id="kocokSub">Tekan tombol untuk mulai kocok</div>
                 </div>
                 <div class="kocok-controls">
-                    <button class="btn btn-big btn-primary" id="btnKocok">🎲 Mulai Kocok</button>
-                    <button class="btn btn-big btn-success" id="btnSimpanMenang" hidden>✓ Simpan Pemenang</button>
-                    <button class="btn btn-secondary" id="btnUlangKocok" hidden>Ulang</button>
+                    <button class="btn btn-big btn-primary admin-only" id="btnKocok">🎲 Mulai Kocok</button>
+                    <button class="btn btn-big btn-success admin-only" id="btnSimpanMenang" hidden>✓ Simpan Pemenang</button>
+                    <button class="btn btn-secondary admin-only" id="btnUlangKocok" hidden>Ulang</button>
+                    <p class="peserta-only kocok-wait">⏳ Menunggu admin mengocok arisan...</p>
                 </div>
                 <div class="kocok-peserta">
                     <h3>Kandidat (belum menang)</h3>
@@ -261,6 +265,23 @@
                 <div class="modal-actions">
                     <button class="btn btn-secondary" data-close>Batal</button>
                     <button class="btn btn-primary" id="btnSavePeserta">Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Admin Login -->
+        <div class="modal" id="modalAdmin" hidden>
+            <div class="modal-backdrop" data-close-admin></div>
+            <div class="modal-box modal-small">
+                <h3>🔐 Login Admin</h3>
+                <p>Hanya admin yang bisa tambah/edit data. Peserta cukup lihat data & chat.</p>
+                <label class="field">
+                    <span>Password Admin</span>
+                    <input type="password" id="adminPwd" placeholder="Masukkan password" autocomplete="current-password">
+                </label>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" data-close-admin>Batal</button>
+                    <button class="btn btn-primary" id="btnAdminLogin">Login</button>
                 </div>
             </div>
         </div>
