@@ -499,6 +499,7 @@ document.getElementById('btnNextPeriode').addEventListener('click', () => {
 
 // ======= KOCOK (ROULETTE WHEEL) =======
 const WHEEL_COLORS = ['#f97316', '#fbbf24', '#38bdf8', '#ef4444', '#22d3ee', '#a855f7', '#facc15', '#64748b', '#10b981', '#ec4899'];
+const CAR_EMOJIS = ['🚗', '🚙', '🚕', '🏎️', '🚐', '🚛', '🚚', '🛻', '🚓', '🚌'];
 const CANVAS_SIZE = 720;
 let wheelRotation = 0;
 let cachedKandidat = [];
@@ -536,29 +537,32 @@ function drawWheel(rotation, kandidat, highlightIdx = -1) {
         ctx.rotate(startAngle + sliceAngle / 2);
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#0f1419';
-        const fontSize = Math.max(22, Math.min(44, 56 - n * 2));
-        ctx.font = `700 ${fontSize}px Poppins, sans-serif`;
-        const maxChars = n > 12 ? 8 : n > 8 ? 12 : 16;
-        let text = kandidat[i].nama;
-        if (text.length > maxChars) text = text.slice(0, maxChars - 1) + '…';
-        ctx.fillText(text, radius - 30, 0);
+        ctx.fillStyle = '#0a1528';
+        const fontSize = Math.max(20, Math.min(40, 52 - n * 2));
+        ctx.font = `700 ${fontSize}px Poppins, "Segoe UI Emoji", sans-serif`;
+        const maxChars = n > 12 ? 7 : n > 8 ? 10 : 14;
+        let nama = kandidat[i].nama;
+        if (nama.length > maxChars) nama = nama.slice(0, maxChars - 1) + '…';
+        const car = CAR_EMOJIS[i % CAR_EMOJIS.length];
+        ctx.fillText(`${car} ${nama}`, radius - 30, 0);
         ctx.restore();
     }
 
-    // Center hub
+    // Center hub (ship!)
     ctx.beginPath();
-    ctx.arc(cx, cy, 46, 0, 2 * Math.PI);
-    ctx.fillStyle = '#1a2028';
+    ctx.arc(cx, cy, 55, 0, 2 * Math.PI);
+    ctx.fillStyle = '#132238';
     ctx.fill();
     ctx.strokeStyle = '#fbbf24';
     ctx.lineWidth = 6;
     ctx.stroke();
-    // Inner dot
-    ctx.beginPath();
-    ctx.arc(cx, cy, 16, 0, 2 * Math.PI);
-    ctx.fillStyle = '#fbbf24';
-    ctx.fill();
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '64px "Segoe UI Emoji", sans-serif';
+    ctx.fillText('🚢', cx, cy + 2);
+    ctx.restore();
 }
 
 function renderKocok() {
