@@ -4,12 +4,23 @@ const SUPABASE_KEY = 'sb_publishable_d7s3cWfzb_CmEwg_8iBCBw_E2-Xq2M1';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ======= ADMIN MODE =======
-// ⚠️ GANTI password di bawah ini, lalu push ulang ke GitHub
-// Password ini yg kamu (admin) pakai buat edit/kocok arisan.
-// Peserta yg buka link tanpa password cuma bisa lihat + chat.
-const ADMIN_PASSWORD = 'admin123';
+// Password default pertama kali = 'admin123'. Ganti di tab Pengaturan.
+const DEFAULT_ADMIN_PWD = 'admin123';
 const ADMIN_KEY = 'arisan-admin-v1';
 let isAdmin = localStorage.getItem(ADMIN_KEY) === 'yes';
+let adminHash = null; // loaded from Supabase
+
+async function hashPassword(pwd) {
+    const buf = new TextEncoder().encode(pwd);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function getExpectedHash() {
+    return adminHash || await hashPassword(DEFAULT_ADMIN_PWD);
+}
 
 function applyAdminUI() {
     document.body.classList.toggle('is-admin', isAdmin);
@@ -105,6 +116,7 @@ async function loadAll() {
         db.settings.periode = settingsRes.data.periode;
         db.settings.tanggalMulai = settingsRes.data.tanggal_mulai;
         db.periodeAktif = settingsRes.data.periode_aktif;
+        adminHash = settingsRes.data.admin_hash || null;
     }
 
     db.peserta = (pesertaRes.data || []).map(p => ({
@@ -820,9 +832,12 @@ document.querySelectorAll('[data-close-admin]').forEach(el => {
     });
 });
 
-function tryAdminLogin() {
+async function tryAdminLogin() {
     const pwd = document.getElementById('adminPwd').value;
-    if (pwd === ADMIN_PASSWORD) {
+    if (!pwd) { toast('Isi password', true); return; }
+    const inputHash = await hashPassword(pwd);
+    const expected = await getExpectedHash();
+    if (inputHash === expected) {
         isAdmin = true;
         localStorage.setItem(ADMIN_KEY, 'yes');
         applyAdminUI();
@@ -837,9 +852,40 @@ function tryAdminLogin() {
     }
 }
 
+async function changeAdminPassword(oldPwd, newPwd) {
+    const inputHash = await hashPassword(oldPwd);
+    const expected = await getExpectedHash();
+    if (inputHash !== expected) throw new Error('Password lama salah');
+    if (!newPwd || newPwd.length < 4) throw new Error('Password baru minimal 4 karakter');
+    const newHash = await hashPassword(newPwd);
+    const { error } = await sb.from('settings').update({ admin_hash: newHash }).eq('id', 1);
+    if (error) throw error;
+    adminHash = newHash;
+}
+
 document.getElementById('btnAdminLogin').addEventListener('click', tryAdminLogin);
 document.getElementById('adminPwd').addEventListener('keydown', e => {
     if (e.key === 'Enter') tryAdminLogin();
+});
+
+document.getElementById('btnChangePwd').addEventListener('click', async () => {
+    const oldPwd = document.getElementById('pwdOld').value;
+    const newPwd = document.getElementById('pwdNew').value;
+    const confirmPwd = document.getElementById('pwdConfirm').value;
+    if (newPwd !== confirmPwd) { toast('Konfirmasi password tidak cocok', true); return; }
+    const btn = document.getElementById('btnChangePwd');
+    btn.disabled = true;
+    try {
+        await changeAdminPassword(oldPwd, newPwd);
+        document.getElementById('pwdOld').value = '';
+        document.getElementById('pwdNew').value = '';
+        document.getElementById('pwdConfirm').value = '';
+        toast('Password berhasil diganti 🔐');
+    } catch (err) {
+        toast(err.message, true);
+    } finally {
+        btn.disabled = false;
+    }
 });
 
 // ======= CHAT =======

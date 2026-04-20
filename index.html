@@ -207,6 +207,26 @@
                     </label>
                 </div>
 
+                <h3 class="sub-head">🔐 Ganti Password Admin</h3>
+                <div class="settings-grid">
+                    <label class="field">
+                        <span>Password Lama</span>
+                        <input type="password" id="pwdOld" placeholder="Password saat ini" autocomplete="current-password">
+                    </label>
+                    <label class="field">
+                        <span>Password Baru</span>
+                        <input type="password" id="pwdNew" placeholder="Minimal 4 karakter" autocomplete="new-password">
+                    </label>
+                    <label class="field">
+                        <span>Konfirmasi Password Baru</span>
+                        <input type="password" id="pwdConfirm" placeholder="Ulangi password baru" autocomplete="new-password">
+                    </label>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-primary" id="btnChangePwd">Ganti Password</button>
+                </div>
+                <p class="hint">Password pertama kali: <code>admin123</code>. Ganti segera setelah pertama kali login!</p>
+
                 <h3 class="sub-head">Data</h3>
                 <div class="btn-row">
                     <button class="btn btn-secondary" id="btnExport">⬇ Export JSON</button>
@@ -214,7 +234,7 @@
                     <input type="file" id="importFile" accept=".json" hidden>
                     <button class="btn btn-danger" id="btnReset">⚠ Reset Semua Data</button>
                 </div>
-                <p class="hint">Data tersimpan otomatis di browser (localStorage). Export reguler untuk backup.</p>
+                <p class="hint">Data tersimpan di Supabase (online). Export reguler untuk backup.</p>
             </section>
         </main>
 
