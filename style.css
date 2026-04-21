@@ -1092,6 +1092,8 @@ body.is-admin .peserta-only { display: none !important; }
 
 .chat-footer a:hover { text-decoration: underline; }
 
+.chat-danger-link { color: var(--danger) !important; }
+
 @media (max-width: 500px) {
     .chat-widget {
         bottom: 10px;

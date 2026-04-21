@@ -1025,6 +1025,9 @@ function chatSubscribeRealtime() {
                 chatUpdateUnread();
             }
         })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chat' }, () => {
+            chatLoadMessages();
+        })
         .subscribe();
 }
 
@@ -1066,6 +1069,21 @@ function setupChat() {
             chatRenderArea();
             chatLoadMessages();
         }
+    });
+
+    document.getElementById('chatClearAll').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!isAdmin) { toast('Cuma admin yg bisa hapus', true); return; }
+        confirmAction('Hapus SEMUA pesan chat? Tindakan ini tidak bisa dibatalkan.', async () => {
+            try {
+                const { error } = await sb.from('chat').delete().gt('id', 0);
+                if (error) throw error;
+                chatLoadMessages();
+                toast('Semua chat dihapus');
+            } catch (err) {
+                toast('Gagal hapus: ' + err.message, true);
+            }
+        });
     });
 
     document.getElementById('chatForm').addEventListener('submit', async (e) => {
