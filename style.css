@@ -87,6 +87,10 @@ body {
     font-size: 20px;
     font-weight: 700;
     letter-spacing: -.3px;
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .mode-badge {
@@ -205,16 +209,21 @@ body.is-admin .peserta-only { display: none !important; }
 }
 
 .panel-tab h2 {
-    font-size: 20px;
+    font-size: 22px;
     margin-bottom: 18px;
-    letter-spacing: -.3px;
+    letter-spacing: -.4px;
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
 }
 
 .panel-tab h3 {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 12px;
-    color: var(--text);
+    color: var(--accent);
 }
 
 .sub-head {
@@ -263,9 +272,32 @@ body.is-admin .peserta-only { display: none !important; }
 }
 
 .stat-value {
-    font-size: 26px;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 800;
     letter-spacing: -.5px;
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.stat-card:nth-child(1) .stat-value {
+    background: linear-gradient(135deg, var(--accent), #ffafcc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.stat-card:nth-child(2) .stat-value {
+    background: linear-gradient(135deg, var(--info), var(--lavender));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.stat-card:nth-child(3) .stat-value {
+    background: linear-gradient(135deg, #2b8b6a, var(--mint));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .dash-row {
@@ -293,9 +325,12 @@ body.is-admin .peserta-only { display: none !important; }
 }
 
 .progress-ring-inner span {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--accent);
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .progress-ring-inner small {
@@ -372,12 +407,12 @@ body.is-admin .peserta-only { display: none !important; }
 .data-table th {
     text-align: left;
     padding: 12px 14px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .5px;
-    color: var(--text-dim);
-    border-bottom: 1px solid var(--border);
+    color: var(--accent);
+    border-bottom: 2px solid var(--border);
 }
 
 .data-table td {
@@ -529,9 +564,13 @@ body.is-admin .peserta-only { display: none !important; }
 }
 
 .summary-box .val {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 800;
     margin-top: 2px;
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 /* KOCOK */
