@@ -1,26 +1,28 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg: #0a1528;              /* deep night harbor */
-    --bg-card: #132238;         /* ship steel */
-    --bg-card-2: #1c304e;       /* riveted hull */
-    --border: #2b4269;          /* metal seam */
-    --text: #e8edf3;
-    --text-dim: #8fa3bd;
-    --accent: #f97316;          /* safety orange (life vest, container paint) */
-    --accent-hover: #ea580c;
-    --gold: #fbbf24;            /* warning yellow (crane, caution tape) */
-    --gold-hover: #f59e0b;
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
-    --info: #38bdf8;            /* sea blue */
-    --radius: 10px;
-    --radius-sm: 6px;
-    --shadow: 0 4px 20px rgba(0,0,0,.35);
+    --bg: #fff8f0;              /* warm cream */
+    --bg-card: #ffffff;         /* white card */
+    --bg-card-2: #fef5eb;       /* pale peach */
+    --border: #f5e3d0;          /* soft peach border */
+    --text: #3d3524;            /* warm dark brown */
+    --text-dim: #8a7a68;        /* muted brown */
+    --accent: #ff9a8b;          /* coral pink */
+    --accent-hover: #f97d6b;
+    --gold: #ffc97a;            /* soft peach gold */
+    --gold-hover: #f4b062;
+    --danger: #ff7a85;          /* soft pink red */
+    --danger-hover: #ef5c6a;
+    --info: #8cc5ff;            /* soft sky blue */
+    --mint: #b5ead7;            /* pastel mint */
+    --lavender: #c7ceea;        /* soft lavender */
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 20px rgba(61,53,36,.08);
 }
 
 body {
-    background: linear-gradient(180deg, #0a1528 0%, #0d1a30 100%) fixed;
+    background: linear-gradient(180deg, #fff8f0 0%, #fef5eb 100%) fixed;
 }
 
 body {
@@ -39,14 +41,14 @@ body {
 
 /* TOPBAR */
 .topbar {
-    background: linear-gradient(135deg, #132238 0%, #1c304e 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #fef5eb 100%);
     border: 1px solid var(--border);
-    border-top: 3px solid var(--accent);
     border-radius: var(--radius);
     padding: 18px 22px;
     margin-bottom: 20px;
-    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.04);
+    box-shadow: var(--shadow);
     position: relative;
+    overflow: hidden;
 }
 
 .topbar::before {
@@ -55,13 +57,8 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: repeating-linear-gradient(90deg,
-        var(--accent) 0 20px,
-        #0a1528 20px 30px,
-        var(--gold) 30px 50px,
-        #0a1528 50px 60px);
-    border-radius: var(--radius) var(--radius) 0 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--gold) 33%, var(--mint) 66%, var(--info) 100%);
 }
 
 .brand {
@@ -74,14 +71,14 @@ body {
 .brand-icon {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: 14px;
     background: linear-gradient(135deg, var(--accent), var(--gold));
     display: grid;
     place-items: center;
     font-weight: 800;
     font-size: 26px;
-    color: #0a1528;
-    box-shadow: 0 4px 12px rgba(249,115,22,.35), inset 0 0 0 2px rgba(255,255,255,.15);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(255,154,139,.35), inset 0 0 0 2px rgba(255,255,255,.35);
 }
 
 .brand-text { flex: 1; min-width: 0; }
@@ -253,7 +250,7 @@ body.is-admin .peserta-only { display: none !important; }
 }
 
 .stat-card.highlight {
-    background: linear-gradient(135deg, rgba(249,115,22,.18), rgba(251,191,36,.12));
+    background: linear-gradient(135deg, rgba(255,154,139,.18), rgba(255,201,122,.15));
     border-color: var(--accent);
 }
 
@@ -409,10 +406,10 @@ body.is-admin .peserta-only { display: none !important; }
     letter-spacing: .4px;
 }
 
-.badge-menang { background: rgba(251,191,36,.15); color: var(--gold); }
-.badge-belum { background: rgba(58,130,246,.15); color: var(--info); }
-.badge-lunas { background: rgba(16,185,129,.15); color: var(--accent); }
-.badge-belum-bayar { background: rgba(239,68,68,.15); color: var(--danger); }
+.badge-menang { background: rgba(255,201,122,.35); color: #a86a1c; }
+.badge-belum { background: rgba(140,197,255,.3); color: #3d7bb8; }
+.badge-lunas { background: rgba(181,234,215,.5); color: #2b8b6a; }
+.badge-belum-bayar { background: rgba(255,122,133,.25); color: #c23a4a; }
 
 /* BUTTONS */
 .btn {
@@ -551,8 +548,8 @@ body.is-admin .peserta-only { display: none !important; }
 
 .kocok-stage {
     background:
-        radial-gradient(circle at 50% 0%, rgba(249,115,22,.08), transparent 60%),
-        linear-gradient(135deg, #132238, #1c304e);
+        radial-gradient(circle at 50% 0%, rgba(255,154,139,.15), transparent 60%),
+        linear-gradient(135deg, #ffffff, #fef5eb);
     border: 2px solid var(--border);
     border-radius: var(--radius);
     padding: 30px 20px;
@@ -567,7 +564,7 @@ body.is-admin .peserta-only { display: none !important; }
 }
 
 .kocok-stage.done {
-    background: linear-gradient(135deg, rgba(251,191,36,.2), rgba(249,115,22,.18));
+    background: linear-gradient(135deg, rgba(255,201,122,.3), rgba(255,154,139,.2));
     border-color: var(--gold);
 }
 
@@ -585,7 +582,7 @@ body.is-admin .peserta-only { display: none !important; }
     height: 100%;
     display: block;
     border-radius: 50%;
-    box-shadow: 0 10px 40px rgba(0,0,0,.5), inset 0 0 0 6px rgba(15,20,25,.6);
+    box-shadow: 0 12px 40px rgba(255,154,139,.25), 0 4px 12px rgba(61,53,36,.08), inset 0 0 0 6px rgba(255,255,255,.4);
 }
 
 .wheel-pointer {
@@ -913,7 +910,7 @@ body.is-admin .peserta-only { display: none !important; }
 
 .chat-head {
     background: linear-gradient(135deg, var(--accent), var(--gold));
-    color: #0a1528;
+    color: #fff;
     padding: 12px 16px;
     display: flex;
     justify-content: space-between;
@@ -973,14 +970,14 @@ body.is-admin .peserta-only { display: none !important; }
 
 .chat-msg.mine {
     background: var(--accent);
-    color: #0f1419;
+    color: #fff;
     align-self: flex-end;
 }
 
 .chat-msg .who {
     font-weight: 700;
     font-size: 11px;
-    color: var(--gold);
+    color: #a86a1c;
     margin-bottom: 2px;
 }
 

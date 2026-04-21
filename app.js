@@ -498,7 +498,7 @@ document.getElementById('btnNextPeriode').addEventListener('click', () => {
 });
 
 // ======= KOCOK (ROULETTE WHEEL) =======
-const WHEEL_COLORS = ['#f97316', '#fbbf24', '#38bdf8', '#ef4444', '#22d3ee', '#a855f7', '#facc15', '#64748b', '#10b981', '#ec4899'];
+const WHEEL_COLORS = ['#ff9a8b', '#ffc97a', '#8cc5ff', '#b5ead7', '#c7ceea', '#ffdac1', '#ffafcc', '#a8e6cf', '#fad0c9', '#ffd6e0'];
 const CAR_EMOJIS = ['🚗', '🚙', '🚕', '🏎️', '🚐', '🚛', '🚚', '🛻', '🚓', '🚌'];
 const CANVAS_SIZE = 720;
 let wheelRotation = 0;
@@ -526,9 +526,9 @@ function drawWheel(rotation, kandidat, highlightIdx = -1) {
         ctx.moveTo(cx, cy);
         ctx.arc(cx, cy, radius, startAngle, endAngle);
         ctx.closePath();
-        ctx.fillStyle = isHighlight ? '#fde047' : WHEEL_COLORS[i % WHEEL_COLORS.length];
+        ctx.fillStyle = isHighlight ? '#ffd97a' : WHEEL_COLORS[i % WHEEL_COLORS.length];
         ctx.fill();
-        ctx.strokeStyle = '#0f1419';
+        ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 4;
         ctx.stroke();
 
@@ -537,7 +537,7 @@ function drawWheel(rotation, kandidat, highlightIdx = -1) {
         ctx.rotate(startAngle + sliceAngle / 2);
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#0a1528';
+        ctx.fillStyle = '#3d3524';
         const fontSize = Math.max(20, Math.min(40, 52 - n * 2));
         ctx.font = `700 ${fontSize}px Poppins, "Segoe UI Emoji", sans-serif`;
         const maxChars = n > 12 ? 7 : n > 8 ? 10 : 14;
@@ -551,9 +551,9 @@ function drawWheel(rotation, kandidat, highlightIdx = -1) {
     // Center hub (ship!)
     ctx.beginPath();
     ctx.arc(cx, cy, 55, 0, 2 * Math.PI);
-    ctx.fillStyle = '#132238';
+    ctx.fillStyle = '#ffffff';
     ctx.fill();
-    ctx.strokeStyle = '#fbbf24';
+    ctx.strokeStyle = '#ffc97a';
     ctx.lineWidth = 6;
     ctx.stroke();
 
